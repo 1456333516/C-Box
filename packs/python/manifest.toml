@@ -1,0 +1,18 @@
+schema_version = "1.0"
+pack_id = "python"
+name = "Python"
+description = "Python 3 解释器"
+category = "runtime"
+platforms = ["windows"]
+version_requirement = ">=3.9.0"
+dependencies = []
+
+[detect]
+command = "python --version"
+version_regex = 'Python (?P<version>\d+\.\d+\.\d+)'
+fallback_command = "python3 --version"
+
+[install.windows]
+method = "winget"
+package = "Python.Python.3.12"
+requires_admin = false

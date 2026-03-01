@@ -1,0 +1,17 @@
+schema_version = "1.0"
+pack_id = "git"
+name = "Git"
+description = "分布式版本控制系统"
+category = "vcs"
+platforms = ["windows"]
+version_requirement = ">=2.40.0"
+dependencies = []
+
+[detect]
+command = "git --version"
+version_regex = 'git version (?P<version>\d+\.\d+\.\d+)'
+
+[install.windows]
+method = "winget"
+package = "Git.Git"
+requires_admin = false

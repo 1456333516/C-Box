@@ -74,7 +74,7 @@ C-Box/
 检测逻辑在 Rust 侧通过 `@tauri-apps/plugin-shell` 执行系统命令（如 `node --version`），解析 stdout 提取版本号。
 
 - 优先使用 `detect.command`，失败时回退到 `detect.fallback_command`
-- 输出做 trim + 正则匹配，忽略 locale 前缀和多余输出
+- **编码处理**：所有命令前置 `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; `，解决中文 Windows（GBK 编码）下乱码问题；Rust 侧以 `String::from_utf8_lossy` 解码，规范化 CRLF→LF 后再做 trim + 正则匹配
 - 命令超时设为 10 秒，超时视为检测失败
 
 **替代方案**：通过文件系统探测（检查安装路径是否存在）→ 放弃，因为不同用户安装路径不同，不可靠。
@@ -90,7 +90,9 @@ MVP 支持的安装方式：
 | `script` | 执行 Pack 目录下的 `.ps1` 脚本 | 自定义安装 |
 | `url` | 下载安装包后执行（预留，MVP 不实现） | — |
 
-所有命令通过统一脚本执行器（PowerShell `-NoProfile -Command`）执行，Rust 侧构造命令字符串，仅允许 manifest 中声明的命令模板。
+所有命令通过统一脚本执行器（`powershell.exe -NoProfile -NonInteractive -Command`）执行，Rust 侧构造命令字符串，仅允许 manifest 中声明的命令模板。
+
+**Tauri 2 Capabilities 约束**：`tauri-plugin-shell` 实行严格沙箱白名单，必须在 `src-tauri/capabilities/default.json` 的 `shell:allow-execute.allow` 数组中显式声明 `powershell`（cmd: `powershell.exe`）和 `pwsh` 两个条目，`-Command` 参数位置使用 `{ "validator": ".+" }`。Rust 代码中通过声明的 `name` 字段引用命令（`Command::new("powershell")`），使用可执行文件名将被沙箱静默拦截。
 
 ### D5: 状态持久化与崩溃恢复
 

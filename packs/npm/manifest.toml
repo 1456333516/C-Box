@@ -1,0 +1,12 @@
+schema_version = "1.0"
+pack_id = "npm"
+name = "npm"
+description = "Node.js 包管理器（随 Node.js 附带）"
+category = "package-manager"
+platforms = ["windows"]
+version_requirement = ">=9.0.0"
+dependencies = ["nodejs"]
+
+[detect]
+command = "npm --version"
+version_regex = '(?P<version>\d+\.\d+\.\d+)'

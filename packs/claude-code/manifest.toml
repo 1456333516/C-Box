@@ -1,0 +1,17 @@
+schema_version = "1.0"
+pack_id = "claude-code"
+name = "Claude Code"
+description = "Anthropic Claude Code CLI"
+category = "ai-tools"
+platforms = ["windows"]
+version_requirement = ">=0.1.0"
+dependencies = ["nodejs", "npm"]
+
+[detect]
+command = "claude --version"
+version_regex = '(?P<version>\d+\.\d+\.\d+)'
+
+[install.windows]
+method = "script"
+script = "install.ps1"
+requires_admin = false

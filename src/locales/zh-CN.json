@@ -1,0 +1,26 @@
+{
+  "app": {
+    "title": "C-Box"
+  },
+  "pack": {
+    "category": {
+      "runtime": "运行时",
+      "package-manager": "包管理器",
+      "vcs": "版本控制",
+      "ai-tools": "AI 工具"
+    },
+    "state": {
+      "undetected": "未检测",
+      "detecting": "检测中...",
+      "installed": "已安装",
+      "not_installed": "未安装",
+      "detect_failed": "检测失败"
+    }
+  },
+  "action": {
+    "detect_all": "全部检测",
+    "detect": "检测",
+    "install": "安装",
+    "retry": "重试"
+  }
+}

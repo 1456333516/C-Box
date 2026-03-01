@@ -1,1 +1,15 @@
+# Claude Code
 .claude/
+
+# Node
+node_modules/
+dist/
+
+# Rust
+src-tauri/target/
+
+# Tauri auto-generated
+src-tauri/gen/
+
+# Dev scripts
+dev.ps1

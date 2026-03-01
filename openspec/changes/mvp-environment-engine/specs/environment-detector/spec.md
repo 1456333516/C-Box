@@ -18,6 +18,13 @@ If the primary `detect.command` fails, the system SHALL attempt `detect.fallback
 - **WHEN** `python --version` fails (command not found) but `python3 --version` returns `Python 3.12.0`
 - **THEN** the version is parsed as `3.12.0` from the fallback command output
 
+### Requirement: Windows stdout encoding normalization
+On Windows, PowerShell's default stdout encoding is locale-dependent (e.g., GBK on Chinese Windows). The system SHALL prepend `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; ` to every detection command before passing it to PowerShell's `-Command` argument. The Rust side SHALL decode stdout bytes with `String::from_utf8_lossy`, then normalize CRLF to LF and trim surrounding whitespace before regex matching.
+
+#### Scenario: Detection on Chinese Windows with GBK locale
+- **WHEN** running on Chinese Windows (default OEM codepage GBK) and `node --version` is executed
+- **THEN** the prepended `[Console]::OutputEncoding` declaration forces UTF-8 byte output, and Rust decodes the result as `v22.14.0` with no garbled characters
+
 ### Requirement: Detection timeout
 Each detection command SHALL have a 10-second timeout. Commands exceeding the timeout SHALL be treated as detection failures.
 

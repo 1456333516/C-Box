@@ -1,0 +1,18 @@
+schema_version = "1.0"
+pack_id = "nodejs"
+name = "Node.js"
+description = "JavaScript 运行时环境 (LTS)"
+category = "runtime"
+platforms = ["windows"]
+version_requirement = ">=18.0.0"
+dependencies = []
+
+[detect]
+command = "node --version"
+version_regex = 'v?(?P<version>\d+\.\d+\.\d+)'
+fallback_command = "node -v"
+
+[install.windows]
+method = "winget"
+package = "OpenJS.NodeJS.LTS"
+requires_admin = false

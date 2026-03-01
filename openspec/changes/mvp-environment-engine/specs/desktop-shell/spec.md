@@ -1,5 +1,37 @@
 ## ADDED Requirements
 
+### Requirement: Tauri 2 shell capabilities configuration
+The application SHALL declare explicit shell command permissions in `src-tauri/capabilities/default.json` using the `shell:allow-execute` identifier with an `allow` scope array. Both `powershell.exe` (name: `"powershell"`) and `pwsh` (name: `"pwsh"`) SHALL be declared with fixed args `-NoProfile`, `-NonInteractive`, `-Command` and a final `{ "validator": ".+" }` entry for the dynamic command content. Rust code SHALL reference commands by their declared `name` value (e.g., `Command::new("powershell")`), not by the executable filename. Commands not present in the `allow` scope are silently blocked by the Tauri 2 sandbox with no error surfaced to the OS.
+
+#### Scenario: Command referenced by filename instead of declared name
+- **WHEN** Rust code calls `Command::new("powershell.exe")` (using the executable filename instead of the declared `name: "powershell"`)
+- **THEN** the Tauri sandbox silently blocks execution and returns an error; no system-level process is spawned
+
+#### Scenario: Correctly declared command executes
+- **WHEN** Rust code calls `Command::new("powershell")` matching `name: "powershell"` in the capabilities `allow` array
+- **THEN** the Tauri sandbox permits spawning `powershell.exe` with the provided arguments
+
+#### Reference: capabilities/default.json shell scope structure
+```json
+{
+  "identifier": "shell:allow-execute",
+  "allow": [
+    {
+      "name": "powershell",
+      "cmd": "powershell.exe",
+      "args": ["-NoProfile", "-NonInteractive", "-Command", { "validator": ".+" }],
+      "sidecar": false
+    },
+    {
+      "name": "pwsh",
+      "cmd": "pwsh",
+      "args": ["-NoProfile", "-NonInteractive", "-Command", { "validator": ".+" }],
+      "sidecar": false
+    }
+  ]
+}
+```
+
 ### Requirement: Application bootstrap
 The application SHALL start as a Tauri 2 desktop window with a Vue 3 frontend. The Rust backend SHALL initialize the Pack loader, state machine, and Orchestrator during the `setup` hook before the main window is shown.
 

@@ -1,0 +1,17 @@
+schema_version = "1.0"
+pack_id = "uv"
+name = "uv"
+description = "极速 Python 包管理器"
+category = "package-manager"
+platforms = ["windows"]
+version_requirement = ">=0.1.0"
+dependencies = []
+
+[detect]
+command = "uv --version"
+version_regex = 'uv (?P<version>\d+\.\d+\.\d+)'
+
+[install.windows]
+method = "winget"
+package = "astral-sh.uv"
+requires_admin = false
