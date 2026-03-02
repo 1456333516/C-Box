@@ -38,11 +38,14 @@ pub struct PlatformInstall {
     pub method: InstallMethod,
     pub package: Option<String>,
     pub script: Option<String>,
+    pub checksum: Option<String>,
     #[serde(default)]
     pub requires_admin: bool,
+    #[serde(default)]
+    pub requires_reboot: bool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum InstallMethod {
     Winget,
@@ -50,14 +53,23 @@ pub enum InstallMethod {
     Script,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "data", rename_all = "snake_case")]
 pub enum PackState {
     Undetected,
     Detecting,
-    Installed { version: String },
     NotInstalled,
+    Downloading,
+    Installing,
+    Installed {
+        version: String,
+        #[serde(default)]
+        pending_reboot: bool,
+    },
+    Configured,
     DetectFailed { reason: String },
+    DownloadFailed { reason: String },
+    InstallFailed { reason: String },
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -72,7 +84,7 @@ impl DetectResult {
         Self {
             pack_id: pack_id.to_string(),
             installed_version: Some(version.clone()),
-            state: PackState::Installed { version },
+            state: PackState::Installed { version, pending_reboot: false },
         }
     }
 

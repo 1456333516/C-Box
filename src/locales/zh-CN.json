@@ -12,13 +12,19 @@
     "state": {
       "undetected": "未检测",
       "detecting": "检测中...",
-      "installed": "已安装",
       "not_installed": "未安装",
-      "detect_failed": "检测失败"
+      "downloading": "下载中...",
+      "installing": "安装中...",
+      "installed": "已安装",
+      "configured": "已配置",
+      "detect_failed": "检测失败",
+      "download_failed": "下载失败",
+      "install_failed": "安装失败"
     }
   },
   "action": {
     "detect_all": "全部检测",
+    "install_all": "安装全部缺失",
     "detect": "检测",
     "install": "安装",
     "retry": "重试"

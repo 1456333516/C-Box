@@ -2,10 +2,16 @@
   <main class="home">
     <header class="home-header">
       <h1>{{ t('app.title') }}</h1>
-      <button class="btn-primary" :disabled="store.detecting" @click="store.detectAll()">
-        <span v-if="store.detecting" class="spinner" />
-        {{ t('action.detect_all') }}
-      </button>
+      <div class="header-actions">
+        <button class="btn-primary" :disabled="store.detecting" @click="store.detectAll()">
+          <span v-if="store.detecting" class="spinner" />
+          {{ t('action.detect_all') }}
+        </button>
+        <!-- 8.6: Install all missing -->
+        <button class="btn-secondary" @click="store.installAllMissing()">
+          {{ t('action.install_all') }}
+        </button>
+      </div>
     </header>
 
     <div v-if="!store.initialized" class="loading">
@@ -22,6 +28,7 @@
         :key="pack.pack_id"
         :pack="pack"
         @detect="store.detectOne(pack.pack_id)"
+        @install="store.installOne(pack.pack_id)"
       />
     </div>
   </main>
@@ -54,6 +61,10 @@ onMounted(() => store.init())
   justify-content: space-between;
   margin-bottom: 24px;
 }
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
 .home-header h1 {
   font-size: 1.4rem;
   font-weight: 700;
@@ -83,6 +94,22 @@ onMounted(() => store.init())
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: transparent;
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-secondary:hover {
+  background: #eff6ff;
 }
 .spinner {
   display: inline-block;

@@ -13,39 +13,87 @@
         <span class="status-text">{{ t(`pack.state.${pack.state.type}`) }}</span>
         <span v-if="pack.installed_version" class="version">v{{ pack.installed_version }}</span>
       </div>
+
+      <!-- 8.5: Install button -->
       <button
-        v-if="pack.state.type === 'undetected' || pack.state.type === 'detect_failed'"
+        v-if="pack.state.type === 'not_installed' || pack.state.type === 'install_failed' || pack.state.type === 'download_failed'"
+        class="btn"
+        :disabled="isInstalling"
+        @click="emit('install')"
+      >
+        {{ t('action.install') }}
+      </button>
+
+      <!-- Detect / Retry button -->
+      <button
+        v-else-if="pack.state.type === 'undetected' || pack.state.type === 'detect_failed'"
         class="btn"
         @click="emit('detect')"
       >
-        {{ t('action.detect') }}
+        {{ pack.state.type === 'detect_failed' ? t('action.retry') : t('action.detect') }}
       </button>
     </div>
 
-    <p
-      v-if="pack.state.type === 'detect_failed'"
-      class="error-msg"
+    <!-- 8.9: Reboot notification banner -->
+    <div
+      v-if="pack.state.type === 'installed' && pack.state.data.pending_reboot"
+      class="reboot-banner"
     >
+      ⚠ 需要重启系统以完成安装
+    </div>
+
+    <!-- Error messages -->
+    <p v-if="pack.state.type === 'detect_failed'" class="error-msg">
       {{ pack.state.data.reason }}
     </p>
+    <p v-else-if="pack.state.type === 'install_failed'" class="error-msg">
+      {{ pack.state.data.reason }}
+    </p>
+
+    <!-- 8.7: Collapsible install log panel -->
+    <div v-if="logs.length > 0" class="log-section">
+      <button class="log-toggle" @click="logOpen = !logOpen">
+        {{ logOpen ? '▾' : '▸' }} 安装日志 ({{ logs.length }} 行)
+      </button>
+      <div v-if="logOpen" class="log-panel">
+        <div
+          v-for="(line, i) in logs"
+          :key="i"
+          class="log-line"
+          :class="{ 'log-err': isErrLine(line) }"
+        >{{ line }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePackStore } from '@/stores/pack'
 import type { PackSummary } from '@/types/pack'
 
 const props = defineProps<{ pack: PackSummary }>()
-const emit = defineEmits<{ detect: [] }>()
+const emit = defineEmits<{ detect: []; install: [] }>()
 const { t } = useI18n()
+const store = usePackStore()
+
+const logOpen = ref(false)
+const isInstalling = computed(() => store.installing.has(props.pack.pack_id))
+const logs = computed(() => store.installLogs[props.pack.pack_id] ?? [])
+
+// Simple heuristic: lines with "error" or "fail" words (case-insensitive) shown in red
+function isErrLine(line: string) {
+  return /error|fail|exception/i.test(line)
+}
 
 const dotClass = computed(() => ({
   'dot-gray': props.pack.state.type === 'undetected',
   'dot-blue dot-pulse': props.pack.state.type === 'detecting',
-  'dot-green': props.pack.state.type === 'installed',
+  'dot-yellow dot-pulse': props.pack.state.type === 'downloading' || props.pack.state.type === 'installing',
+  'dot-green': props.pack.state.type === 'installed' || props.pack.state.type === 'configured',
   'dot-orange': props.pack.state.type === 'not_installed',
-  'dot-red': props.pack.state.type === 'detect_failed',
+  'dot-red': props.pack.state.type === 'detect_failed' || props.pack.state.type === 'install_failed' || props.pack.state.type === 'download_failed',
 }))
 </script>
 
@@ -105,6 +153,7 @@ const dotClass = computed(() => ({
 }
 .dot-gray   { background: #94a3b8; }
 .dot-blue   { background: #3b82f6; }
+.dot-yellow { background: #eab308; }
 .dot-green  { background: #22c55e; }
 .dot-orange { background: #f97316; }
 .dot-red    { background: #ef4444; }
@@ -131,8 +180,20 @@ const dotClass = computed(() => ({
   cursor: pointer;
   transition: background 0.1s;
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--c-badge, #f1f5f9);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.reboot-banner {
+  font-size: 0.78rem;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  padding: 6px 10px;
+  border-radius: 4px;
 }
 .error-msg {
   margin: 0;
@@ -142,5 +203,37 @@ const dotClass = computed(() => ({
   padding: 6px 10px;
   border-radius: 4px;
   word-break: break-word;
+}
+.log-section {
+  border-top: 1px solid var(--c-border, #e2e8f0);
+  padding-top: 6px;
+}
+.log-toggle {
+  all: unset;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--c-muted, #64748b);
+}
+.log-toggle:hover {
+  color: #334155;
+}
+.log-panel {
+  margin-top: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  background: #0f172a;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: monospace;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.log-line {
+  color: #cbd5e1;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.log-err {
+  color: #f87171;
 }
 </style>

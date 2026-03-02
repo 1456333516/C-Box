@@ -22,8 +22,8 @@
 
 - [x] 3.1 Define `PackState` enum with all states: Undetected, Detecting, NotInstalled, Downloading, Installing, Installed, Configured, DetectFailed, DownloadFailed, InstallFailed
 - [x] 3.2 Implement state transition validation (only allow valid transitions)
-- [ ] 3.3 Implement state persistence via `@tauri-apps/plugin-store` with autoSave and forced flush on critical transitions
-- [ ] 3.4 Implement crash recovery logic: detect interrupted states on startup and reset to retryable state
+- [x] 3.3 Implement state persistence via `@tauri-apps/plugin-store` with autoSave and forced flush on critical transitions
+- [x] 3.4 Implement crash recovery logic: detect interrupted states on startup and reset to retryable state
 - [x] 3.5 Implement Tauri Event emission (`pack:state-changed`) on every state transition
 
 ## 4. Environment Detector (Rust)
@@ -36,17 +36,17 @@
 
 ## 5. Pack Installer (Rust)
 
-- [ ] 5.1 Implement unified script executor: construct PowerShell commands from manifest templates
-- [ ] 5.2 Implement `winget` installation method: command construction, execution, output streaming
-- [ ] 5.3 Implement `scoop` installation method
-- [ ] 5.4 Implement `script` installation method: locate and execute Pack-local .ps1 scripts
-- [ ] 5.5 Implement command template validation: reject commands not derived from registered manifests
-- [ ] 5.6 Implement stdout/stderr streaming via Tauri Events (`pack:install-output`)
-- [ ] 5.7 Implement UAC privilege escalation for `requires_admin = true` Packs
-- [ ] 5.8 Implement PATH refresh via `WM_SETTINGCHANGE` broadcast after installation
-- [ ] 5.9 Implement post-install re-detection to verify installation success
-- [ ] 5.10 Implement `requires_reboot` flag handling and notification
-- [ ] 5.11 Implement checksum (SHA-256) verification for url/script methods
+- [x] 5.1 Implement unified script executor: construct PowerShell commands from manifest templates
+- [x] 5.2 Implement `winget` installation method: command construction, execution, output streaming
+- [x] 5.3 Implement `scoop` installation method
+- [x] 5.4 Implement `script` installation method: locate and execute Pack-local .ps1 scripts
+- [x] 5.5 Implement command template validation: reject commands not derived from registered manifests
+- [x] 5.6 Implement stdout/stderr streaming via Tauri Events (`pack:install-output`)
+- [x] 5.7 Implement UAC privilege escalation for `requires_admin = true` Packs
+- [x] 5.8 Implement PATH refresh via `WM_SETTINGCHANGE` broadcast after installation
+- [x] 5.9 Implement post-install re-detection to verify installation success
+- [x] 5.10 Implement `requires_reboot` flag handling and notification
+- [x] 5.11 Implement checksum (SHA-256) verification for url/script methods
 
 ## 6. Orchestrator (Rust)
 
@@ -54,13 +54,13 @@
 - [x] 6.2 Implement Tauri Command `orchestrator_dispatch` as the single entry point
 - [x] 6.3 Implement request routing: InstallPack, DetectAll, DetectPack, RetryPack
 - [x] 6.4 Implement concurrent request guard (prevent duplicate operations on same Pack)
-- [ ] 6.5 Implement dependency-aware installation: check and auto-install missing dependencies before target Pack
+- [x] 6.5 Implement dependency-aware installation: check and auto-install missing dependencies before target Pack
 
 ## 7. Environment Lock File (Rust)
 
-- [ ] 7.1 Define `environment.lock.toml` schema and serialization types
-- [ ] 7.2 Implement auto-generation after detection/installation: record pack_id, installed_version, installed_at, install_method, checksum
-- [ ] 7.3 Implement lock file read on startup to initialize state from previous session
+- [x] 7.1 Define `environment.lock.toml` schema and serialization types
+- [x] 7.2 Implement auto-generation after detection/installation: record pack_id, installed_version, installed_at, install_method, checksum
+- [x] 7.3 Implement lock file read on startup to initialize state from previous session
 
 ## 8. Frontend - Pack List UI (Vue 3)
 
@@ -68,17 +68,17 @@
 - [x] 8.2 Create `PackList` view: grid/list of PackCards with "Detect All" and "Install All Missing" buttons
 - [x] 8.3 Implement Pinia store for Pack state management (synced with Rust backend via Tauri Events)
 - [x] 8.4 Implement "Detect All" button: invoke Orchestrator, show per-Pack detection spinners
-- [ ] 8.5 Implement per-Pack "Install" button: invoke Orchestrator, show progress bar
-- [ ] 8.6 Implement "Install All Missing" button: batch install with dependency-order progress
-- [ ] 8.7 Implement collapsible log panel per Pack for real-time installation output
+- [x] 8.5 Implement per-Pack "Install" button: invoke Orchestrator, show progress bar
+- [x] 8.6 Implement "Install All Missing" button: batch install with dependency-order progress
+- [x] 8.7 Implement collapsible log panel per Pack for real-time installation output
 - [x] 8.8 Implement error state display: red indicator, error message, "Retry" button
-- [ ] 8.9 Implement reboot notification banner for `pending_reboot` Packs
+- [x] 8.9 Implement reboot notification banner for `pending_reboot` Packs
 
 ## 9. Integration & Testing
 
-- [ ] 9.1 Write Rust unit tests for Pack loader (valid/invalid manifests, platform filtering, DAG sort)
-- [ ] 9.2 Write Rust unit tests for state machine (transitions, persistence, crash recovery)
-- [ ] 9.3 Write Rust unit tests for Orchestrator (routing, concurrency guard, dependency resolution)
-- [ ] 9.4 Manual integration test: full lifecycle on Windows (detect → install → verify) for all 6 Packs
+- [x] 9.1 Write Rust unit tests for Pack loader (valid/invalid manifests, platform filtering, DAG sort)
+- [x] 9.2 Write Rust unit tests for state machine (transitions, persistence, crash recovery)
+- [x] 9.3 Write Rust unit tests for Orchestrator (routing, concurrency guard, dependency resolution)
+- [x] 9.4 Manual integration test: full lifecycle on Windows (detect → install → verify) for all 6 Packs
 - [ ] 9.5 Manual test: crash recovery scenario (kill during installation, restart, verify state)
 - [ ] 9.6 Manual test: edge cases (no network, UAC denied, version conflict)

@@ -4,9 +4,14 @@ export type PackId = string
 export type PackState =
   | { type: 'undetected' }
   | { type: 'detecting' }
-  | { type: 'installed'; data: { version: string } }
   | { type: 'not_installed' }
+  | { type: 'downloading' }
+  | { type: 'installing' }
+  | { type: 'installed'; data: { version: string; pending_reboot: boolean } }
+  | { type: 'configured' }
   | { type: 'detect_failed'; data: { reason: string } }
+  | { type: 'download_failed'; data: { reason: string } }
+  | { type: 'install_failed'; data: { reason: string } }
 
 export interface PackSummary {
   pack_id: PackId
@@ -20,4 +25,10 @@ export interface PackSummary {
 export interface StateChangedPayload {
   pack_id: PackId
   state: PackState
+}
+
+export interface InstallOutputPayload {
+  pack_id: PackId
+  stream: 'stdout' | 'stderr'
+  line: string
 }

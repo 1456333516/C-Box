@@ -13,3 +13,6 @@ src-tauri/gen/
 
 # Dev scripts
 dev.ps1
+
+# Generated at runtime
+environment.lock.toml
